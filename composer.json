@@ -2,6 +2,10 @@
     "autoload": {
         "psr-4": {
             "app\\" : "app/"
-        }
+        },
+        "files": [
+            "app/config/constant.php",
+            "app/helper/common.php"
+        ]
     }
 }

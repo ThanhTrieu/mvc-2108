@@ -17,6 +17,19 @@
         <div class="row">
             <div class="col-12 col-sm-12 col-md-6 offset-3">
                 <h5 class="text-center my-3"> Login user ! </h5>
+
+                <?php if($messages === 'error'): ?>
+                    <div class="alert alert-danger my-3">
+                        Vui long nhap thong tin dang nhap !
+                    </div>
+                <?php endif; ?>
+
+                <?php if($messages === 'fail'): ?>
+                    <div class="alert alert-danger my-3">
+                        Tai khoan khong ton tai !
+                    </div>
+                <?php endif; ?>
+
                 <form class="p-3 border" method="post" action="index.php?c=login&m=handleLogin">
                     <div class="mb-3">
                         <label>Username</label>
