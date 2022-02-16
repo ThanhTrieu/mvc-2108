@@ -2,26 +2,31 @@
 
 namespace app\model;
 
-class Product
+use app\database\Database as Model;
+use PDO;
+class Product extends Model
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function getListProducts()
     {
-        return [
-            [
-                'id' => 1,
-                'name' => 'iPhone13',
-                'price' => 2000
-            ],
-            [
-                'id' => 2,
-                'name' => 'SamsungS22',
-                'price' => 2000
-            ],
-            [
-                'id' => 3,
-                'name' => 'Bphone3',
-                'price' => 1000
-            ]
-        ];
+        $data = [];
+        $sql = "SELECT * FROM productions";
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            // trong cau lenh sql khong co tham so - nen ko can kiem tra
+            if($stmt->execute()){
+                if($stmt->rowCount() > 0){
+                    // cau lenh sql ben tren se tra ve nhieu data
+                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    // fetchAll : lay nhieu dong du lieu
+                }
+                $stmt->closeCursor();
+            }
+        }
+        return $data;
     }
 }

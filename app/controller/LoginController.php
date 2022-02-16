@@ -3,9 +3,11 @@
 namespace app\controller;
 
 use app\controller\BaseController as Controller;
+use app\model\Login;
 
 class LoginController extends Controller
 {
+    private $loginModel;
     public function __construct()
     {
         // da login roi thi vao thang luon trang mac dinh
@@ -15,7 +17,8 @@ class LoginController extends Controller
             // loai tru logout
             $this->redirectToDefaultPage();
         }
-        
+        // khoi tao doi tuong de truy cap vao login model
+        $this->loginModel = new Login();
     }
 
     public function index()
@@ -39,9 +42,13 @@ class LoginController extends Controller
 
             if(!empty($password) && !empty($username)) {
                 // moi xu ly
-                if($username === 'admin' && $password === '123456') {
+                $dataUser = $this->loginModel->checkUserLogin($username, $password);                
+                if(!empty($dataUser)) {
                     // gan session
-                    $_SESSION['username'] = $username;
+                    $_SESSION['username'] = $dataUser['username'];
+                    $_SESSION['idUser'] = $dataUser['id'];
+                    $_SESSION['email'] = $dataUser['email'];
+
                     header('Location:index.php?c=home');
                 } else {
                     header('Location:index.php?c=login&state=fail');
@@ -59,6 +66,8 @@ class LoginController extends Controller
             // quay ve trang login
             if(isset($_SESSION['username'])){
                 unset($_SESSION['username']);
+                unset($_SESSION['idUser']);
+                unset($_SESSION['email']);
             }
             header('Location:index.php?c=login');
         }
