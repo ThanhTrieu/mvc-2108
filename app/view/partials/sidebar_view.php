@@ -30,6 +30,12 @@
             <span>Products</span></a>
     </li>
 
+    <li class="nav-item active">
+        <a class="nav-link" href="index.php?c=brand">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Brands</span></a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider">
 
