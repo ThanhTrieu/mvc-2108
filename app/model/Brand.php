@@ -29,14 +29,23 @@ class Brand extends Model
         return $data;
     }
 
-    public function getAllDataBrands()
+    public function getAllDataBrands($key = '')
     {
         $data = [];
-        $sql = "SELECT `id`,`name`,`slug`,`status`,`logo` FROM `brands`";
+        $keyword = "%{$key}%";
+        if(empty($key)){
+            $sql = "SELECT `id`,`name`,`slug`,`status`,`logo` FROM `brands`";
+        } else {
+            $sql = "SELECT `id`,`name`,`slug`,`status`,`logo` FROM `brands` WHERE `name` LIKE :keyword ";
+        }
+        
         $stmt = $this->db->prepare($sql);
-        if($stmt){
-            if($stmt->execute()){
-                if($stmt->rowCount() > 0){
+        if($stmt) {
+            if(!empty($key)) {
+                $stmt->bindParam(':keyword', $keyword, PDO::PARAM_STR);
+            }
+            if($stmt->execute()) {
+                if($stmt->rowCount() > 0) {
                     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 }
                 $stmt->closeCursor();
@@ -120,6 +129,21 @@ class Brand extends Model
             $stmt->bindParam(':logo', $logo, PDO::PARAM_STR);
             $stmt->bindParam(':descriptions', $description, PDO::PARAM_STR);
             $stmt->bindParam(':updated_at', $updatedAt, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            if($stmt->execute()){
+                $flagCheck = true;
+                $stmt->closeCursor();
+            }
+        }
+        return $flagCheck;
+    }
+
+    public function deleteBrandById($id)
+    {
+        $flagCheck = false;
+        $sql = "DELETE FROM `brands` WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             if($stmt->execute()){
                 $flagCheck = true;

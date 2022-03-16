@@ -50,3 +50,14 @@ if(!function_exists('validationBandData')){
         return $error;
     }
 }
+
+if(!function_exists('isRequestAjax')){
+    function isRequestAjax()
+    {
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {    
+            return true;
+            // day la cac ajax request
+        }
+        return false;
+    }
+}

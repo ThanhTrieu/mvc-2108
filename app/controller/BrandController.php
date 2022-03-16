@@ -5,6 +5,7 @@ namespace app\controller;
 use app\controller\BaseController as Controller;
 use app\libs\UploadFile as File;
 use app\model\Brand;
+use app\libs\Pagination;
 
 class BrandController extends Controller
 {
@@ -20,8 +21,18 @@ class BrandController extends Controller
 
     public function index()
     {
+        $keyword = $_GET['s'] ?? '';
+        $keyword = trim(strip_tags($keyword));
+
+        $linkPage = Pagination::createLink([
+            'c' => 'brand',
+            'm' => 'index',
+            'page' => '{page}',
+            's' => $keyword
+        ]);
+
         //xu ly logic o day
-        $allBrands = $this->brandModel->getAllDataBrands();
+        $allBrands = $this->brandModel->getAllDataBrands($keyword);
 
         //load header
         $this->loadHeader([
@@ -29,7 +40,8 @@ class BrandController extends Controller
         ]);
         //load view
         $this->loadView('brands/index_view',[
-            'brands' => $allBrands
+            'brands' => $allBrands,
+            'keyword' => $keyword
         ]);
         //load footer
         $this->loadFooter();
@@ -279,6 +291,34 @@ class BrandController extends Controller
             } else {
                 // quay ve lai form Edit
                 header("Location:index.php?c=brand&m=edit&id={$id}&state=empty");
+            }
+        }
+    }
+
+    public function delete()
+    {
+        // phuong thuc nay chi chap nhan request ajax gui len
+        if(isRequestAjax()){
+            // xu ly
+            $id = $_POST['idBrand'] ?? '';
+            $id = is_numeric($id) && $id > 0 ? $id : 0;
+            if($id !== 0){
+                // hop le
+                // viet model de xoa thuong hieu theo id
+                $info     = $this->brandModel->getDataBrandById($id);
+                $nameLogo = $info['logo'] ?? '';
+                $del = $this->brandModel->deleteBrandById($id);
+                if($del){
+                    // xoa bo anh
+                    if(!empty($nameLogo)){
+                        File::deleteFileServer($nameLogo, PATH_UPLOAD_BRAND_LOGO);
+                    }
+                    echo "OK";
+                } else {
+                    echo "FAIL";
+                }
+            } else {
+                echo "ERROR";
             }
         }
     }

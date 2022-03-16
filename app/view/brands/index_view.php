@@ -4,9 +4,19 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <p> This is brands page !</p>
             <a class="btn btn-primary" href="index.php?c=brand&m=add"> Add brand</a>
+            <a class="btn btn-primary ml-1" href="index.php?c=brand"> View All</a>
         </div>
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+                <input value="<?= htmlentities($keyword); ?>" id="js-nameBranch" type="text" class="form-control small" placeholder="Search for...">
+                <div class="input-group-append">
+                    <button id="js-searchBrand" class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
     <div class="row mt-5">
         <div class="col">
@@ -22,7 +32,7 @@
                 </thead>
                 <tbody>
                     <?php foreach ($brands as $key => $item):?>
-                        <tr>
+                        <tr id="js-brand-<?= $item['id']; ?>">
                             <td><?= $key + 1 ?></td>
                             <td><?= $item['name']; ?></td>
                             <td>
@@ -35,7 +45,7 @@
                                 <a class="btn btn-info" href="index.php?c=brand&m=edit&id=<?= $item['id']; ?>">Edit</a>
                             </td>
                             <td>
-                                <button class="btn btn-danger">Delete</button>
+                                <button id="<?= $item['id']; ?>" class="btn btn-danger js-delete-brand">Delete</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
