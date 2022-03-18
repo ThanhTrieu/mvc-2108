@@ -12,6 +12,34 @@ class Brand extends Model
         parent::__construct();
     }
 
+    public function getAllDataBrandsByPaging($start, $limit, $key = '')
+    {
+        $data = [];
+        $keyword = "%{$key}%";
+        if(empty($key)){
+            $sql = "SELECT `id`,`name`,`slug`,`status`,`logo` FROM `brands` LIMIT :startRow, :limitRow";
+        } else {
+            $sql = "SELECT `id`,`name`,`slug`,`status`,`logo` FROM `brands` WHERE `name` LIKE :keyword LIMIT :startRow, :limitRow";
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        if($stmt) {
+            if(!empty($key)) {
+                $stmt->bindParam(':keyword', $keyword, PDO::PARAM_STR);
+            }
+            $stmt->bindParam(':startRow', $start, PDO::PARAM_INT);
+            $stmt->bindParam(':limitRow', $limit, PDO::PARAM_INT);
+            
+            if($stmt->execute()) {
+                if($stmt->rowCount() > 0) {
+                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                }
+                $stmt->closeCursor();
+            }
+        }
+        return $data;
+    }
+
     public function getDataBrandById($id = 0)
     {
         $data = []; // mang don

@@ -10,6 +10,7 @@ use app\libs\Pagination;
 class BrandController extends Controller
 {
     private $brandModel;
+    const LIMIT_ROWS = 2;
 
     public function __construct()
     {
@@ -24,6 +25,9 @@ class BrandController extends Controller
         $keyword = $_GET['s'] ?? '';
         $keyword = trim(strip_tags($keyword));
 
+        $page = $_GET['page'] ?? '';
+        $page = is_numeric($page) && $page > 0 ? $page : 1;
+
         $linkPage = Pagination::createLink([
             'c' => 'brand',
             'm' => 'index',
@@ -33,6 +37,13 @@ class BrandController extends Controller
 
         //xu ly logic o day
         $allBrands = $this->brandModel->getAllDataBrands($keyword);
+        $totalItems = count($allBrands);
+
+        $paging = Pagination::paginate($linkPage, $totalItems, $page, self::LIMIT_ROWS, $keyword);
+        $start = $paging['start'] ?? 0;
+        $limit = $paging['limit'] ?? self::LIMIT_ROWS;
+        $htmlPage = $paging['htmlPage'];
+        $dataBrands = $this->brandModel->getAllDataBrandsByPaging($start, $limit, $keyword);
 
         //load header
         $this->loadHeader([
@@ -40,8 +51,9 @@ class BrandController extends Controller
         ]);
         //load view
         $this->loadView('brands/index_view',[
-            'brands' => $allBrands,
-            'keyword' => $keyword
+            'brands' => $dataBrands,
+            'keyword' => $keyword,
+            'htmlPage' => $htmlPage
         ]);
         //load footer
         $this->loadFooter();

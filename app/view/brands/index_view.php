@@ -51,6 +51,8 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <!-- phan trang -->
+            <?= $htmlPage; ?>
         </div>
     </div>
 </div>
